@@ -25,8 +25,8 @@ npm run dev
 ```
 
 - API: http://localhost:4000
-- Web CRM (Super Admin / Admin / Reception): http://localhost:5173
-- Doctor PWA: http://localhost:5174
+- Web CRM (Super Admin / Admin / Reception): web-six-virid-gza34xaqcf.vercel.app
+- Doctor PWA: docter-crm-pwa.vercel.app
 
 If MongoDB is not running, the API starts an in-memory database and seeds demo data.
 
@@ -34,9 +34,9 @@ If MongoDB is not running, the API starts an in-memory database and seeds demo d
 
 Password for all: `ChangeMe!MedFlow1`
 
-| App | Email |
-| --- | --- |
-| Web | superadmin@medflow.local |
-| Web | admin.a@medflow.local |
-| Web | reception.a@medflow.local |
-| Doctor PWA | doctor.a@medflow.local |
+| App        | Email                     |
+| ---------- | ------------------------- |
+| Web        | superadmin@medflow.local  |
+| Web        | admin.a@medflow.local     |
+| Web        | reception.a@medflow.local |
+| Doctor PWA | doctor.a@medflow.local    |

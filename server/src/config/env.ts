@@ -6,7 +6,7 @@ export const env = {
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET ?? "dev-medflow-refresh-secret-change",
   accessTtl: process.env.JWT_ACCESS_TTL ?? "15m",
   refreshTtl: process.env.JWT_REFRESH_TTL ?? "7d",
-  corsOrigins: (process.env.CORS_ORIGINS ?? "http://localhost:5173,http://localhost:5174").split(","),
+  corsOrigins: (process.env.CORS_ORIGINS ?? "web-six-virid-gza34xaqcf.vercel.app,docter-crm-pwa.vercel.app").split(","),
   cookieName: "medflow_refresh",
 };
 
