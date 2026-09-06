@@ -1,0 +1,21 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: medflow-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - medflow_mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: medflow
+
+  redis:
+    image: redis:7-alpine
+    container_name: medflow-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+volumes:
+  medflow_mongo_data:
