@@ -16,25 +16,32 @@ export function createApp() {
   app.set("trust proxy", 1);
   app.use(helmet());
   const allowedOrigins = env.corsOrigins.map((o) => o.trim().toLowerCase());
-  app.use(
-    cors({
-      origin: (origin, callback) => {
-        if (!origin) return callback(null, true);
-        const normOrigin = origin.toLowerCase();
-        const originHost = normOrigin.replace(/^https?:\/\//, "");
-        const match = allowedOrigins.some((allowed) => {
-          const normAllowed = allowed.replace(/^https?:\/\//, "");
-          return normOrigin === allowed || originHost === normAllowed;
-        });
-        if (match || env.nodeEnv === "development") {
-          callback(null, true);
-        } else {
-          callback(new Error(`CORS blocked for origin: ${origin}`));
-        }
-      },
-      credentials: true,
-    }),
-  );
+  
+  const corsOptions: cors.CorsOptions = {
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      const norm = origin.toLowerCase().trim();
+      const isVercel = norm.endsWith(".vercel.app") || norm.includes(".vercel.app");
+      const isRender = norm.endsWith(".onrender.com") || norm.includes(".onrender.com");
+      const isLocalhost = norm.includes("localhost") || norm.includes("127.0.0.1");
+      const isInList = allowedOrigins.some((allowed) => {
+        const cleanAllowed = allowed.replace(/^https?:\/\//, "");
+        const cleanOrigin = norm.replace(/^https?:\/\//, "");
+        return cleanOrigin === cleanAllowed || norm === allowed;
+      });
+
+      if (isVercel || isRender || isLocalhost || isInList || env.nodeEnv === "development") {
+        return callback(null, true);
+      }
+      return callback(null, false);
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie", "X-Requested-With", "Accept"],
+    exposedHeaders: ["Set-Cookie"],
+  };
+
+  app.use(cors(corsOptions));
   app.use(express.json({ limit: "1mb" }));
   app.use(cookieParser());
   app.use(
