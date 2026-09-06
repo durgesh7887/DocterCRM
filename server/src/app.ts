@@ -15,9 +15,23 @@ export function createApp() {
   const app = express();
   app.set("trust proxy", 1);
   app.use(helmet());
+  const allowedOrigins = env.corsOrigins.map((o) => o.trim().toLowerCase());
   app.use(
     cors({
-      origin: env.corsOrigins,
+      origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        const normOrigin = origin.toLowerCase();
+        const originHost = normOrigin.replace(/^https?:\/\//, "");
+        const match = allowedOrigins.some((allowed) => {
+          const normAllowed = allowed.replace(/^https?:\/\//, "");
+          return normOrigin === allowed || originHost === normAllowed;
+        });
+        if (match || env.nodeEnv === "development") {
+          callback(null, true);
+        } else {
+          callback(new Error(`CORS blocked for origin: ${origin}`));
+        }
+      },
       credentials: true,
     }),
   );

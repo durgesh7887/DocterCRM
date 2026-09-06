@@ -9,7 +9,7 @@ import { Types } from "mongoose";
 
 const cookieOptions: CookieOptions = {
   httpOnly: true,
-  sameSite: "lax",
+  sameSite: env.nodeEnv === "production" ? "none" : "lax",
   secure: env.nodeEnv === "production",
   path: "/api/v1/auth",
   maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -55,7 +55,11 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
   if (token) {
     await revokeRefreshToken(token);
   }
-  res.clearCookie(env.cookieName, { path: "/api/v1/auth" });
+  res.clearCookie(env.cookieName, {
+    path: "/api/v1/auth",
+    sameSite: env.nodeEnv === "production" ? "none" : "lax",
+    secure: env.nodeEnv === "production",
+  });
   return ok(res, "Logged out successfully");
 });
 
