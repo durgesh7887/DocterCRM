@@ -36,13 +36,21 @@ export class ApiError extends Error {
   }
 }
 
+const API_BASE = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+
+function buildUrl(path: string): string {
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  return `${API_BASE}${cleanPath}`;
+}
+
 export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);
   headers.set("Content-Type", "application/json");
   const token = getToken();
   if (token) headers.set("Authorization", `Bearer ${token}`);
 
-  const res = await fetch(path, { ...init, headers, credentials: "include" });
+  const res = await fetch(buildUrl(path), { ...init, headers, credentials: "include" });
   const body = (await res.json().catch(() => ({}))) as ApiEnvelope<T>;
   if (!res.ok || body.success === false) {
     throw new ApiError(body.message || "Request failed", res.status);
@@ -56,7 +64,7 @@ export async function downloadFile(path: string, filename: string): Promise<void
   const headers: Record<string, string> = {};
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
-  const res = await fetch(path, { headers, credentials: "include" });
+  const res = await fetch(buildUrl(path), { headers, credentials: "include" });
   if (!res.ok) {
     const body = await res.json().catch(() => ({})) as { message?: string };
     throw new ApiError(body.message || "Download failed", res.status);
