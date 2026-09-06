@@ -9,3 +9,4 @@ export const env = {
   corsOrigins: (process.env.CORS_ORIGINS ?? "http://localhost:5173,http://localhost:5174").split(","),
   cookieName: "medflow_refresh",
 };
+
